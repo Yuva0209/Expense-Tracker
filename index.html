@@ -1,0 +1,642 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Expense Tracker</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+  />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap"
+    rel="stylesheet"
+  />
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    #expense-chart {
+      max-width: 400px;
+      max-height: 400px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+  <header class="bg-indigo-600 text-white p-4 shadow-md">
+    <div class="max-w-5xl mx-auto flex items-center justify-between">
+      <h1 class="text-2xl font-semibold flex items-center gap-2">
+        <i class="fas fa-wallet"></i> Expense Tracker
+      </h1>
+      <nav class="hidden sm:flex space-x-6 text-indigo-200">
+        <a href="#add-transaction" class="hover:text-white transition">Add Transaction</a>
+        <a href="#transactions" class="hover:text-white transition">Transactions</a>
+        <a href="#summary" class="hover:text-white transition">Summary</a>
+      </nav>
+      <button
+        id="menu-btn"
+        class="sm:hidden focus:outline-none focus:ring-2 focus:ring-white"
+        aria-label="Toggle menu"
+      >
+        <i class="fas fa-bars text-xl"></i>
+      </button>
+    </div>
+    <nav
+      id="mobile-menu"
+      class="sm:hidden bg-indigo-700 text-indigo-200 hidden flex-col space-y-2 p-4"
+    >
+      <a href="#add-transaction" class="block hover:text-white transition">Add Transaction</a>
+      <a href="#transactions" class="block hover:text-white transition">Transactions</a>
+      <a href="#summary" class="block hover:text-white transition">Summary</a>
+    </nav>
+  </header>
+
+  <main class="flex-grow max-w-5xl mx-auto p-4 w-full">
+    <section
+      id="add-transaction"
+      class="bg-white rounded-lg shadow-md p-6 mb-8"
+      aria-label="Add new income or expense transaction"
+    >
+      <h2 class="text-xl font-semibold mb-4 text-indigo-700 flex items-center gap-2">
+        <i class="fas fa-plus-circle"></i> Add Transaction
+      </h2>
+      <form id="transaction-form" class="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
+        <div class="col-span-1 md:col-span-1">
+          <label for="date" class="block text-gray-700 font-medium mb-1">Date</label>
+          <input
+            type="date"
+            id="date"
+            name="date"
+            class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            required
+            aria-required="true"
+          />
+        </div>
+        <div class="col-span-1 md:col-span-1">
+          <label for="description" class="block text-gray-700 font-medium mb-1">Description</label>
+          <input
+            type="text"
+            id="description"
+            name="description"
+            placeholder="e.g. Grocery shopping"
+            class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            required
+            aria-required="true"
+            maxlength="50"
+          />
+        </div>
+        <div class="col-span-1 md:col-span-1">
+          <label for="category" class="block text-gray-700 font-medium mb-1">Category</label>
+          <select
+            id="category"
+            name="category"
+            class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            required
+            aria-required="true"
+          >
+            <option value="" disabled selected>Select category</option>
+            <option value="Food">Food</option>
+            <option value="Transportation">Transportation</option>
+            <option value="Entertainment">Entertainment</option>
+            <option value="Utilities">Utilities</option>
+            <option value="Health">Health</option>
+            <option value="Salary">Salary</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div class="col-span-1 md:col-span-1">
+          <label for="amount" class="block text-gray-700 font-medium mb-1">Amount</label>
+          <input
+            type="number"
+            id="amount"
+            name="amount"
+            placeholder="0.00"
+            step="0.01"
+            min="0.01"
+            class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            required
+            aria-required="true"
+          />
+        </div>
+        <div class="col-span-1 md:col-span-1 flex flex-col gap-2">
+          <label class="block text-gray-700 font-medium mb-1">Type</label>
+          <div class="flex gap-4">
+            <label class="inline-flex items-center cursor-pointer">
+              <input
+                type="radio"
+                name="type"
+                value="income"
+                class="form-radio text-indigo-600"
+                checked
+                required
+                aria-required="true"
+              />
+              <span class="ml-2 text-gray-700">Income</span>
+            </label>
+            <label class="inline-flex items-center cursor-pointer">
+              <input
+                type="radio"
+                name="type"
+                value="expense"
+                class="form-radio text-indigo-600"
+                required
+                aria-required="true"
+              />
+              <span class="ml-2 text-gray-700">Expense</span>
+            </label>
+          </div>
+          <button
+            type="submit"
+            class="mt-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded px-4 py-2 transition focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            aria-label="Add transaction"
+          >
+            Add
+          </button>
+        </div>
+      </form>
+      <p id="form-error" class="text-red-600 mt-2 text-sm hidden" role="alert"></p>
+    </section>
+
+    <section
+      id="filter-section"
+      class="bg-white rounded-lg shadow-md p-6 mb-8"
+      aria-label="Filter transactions by category"
+    >
+      <h2 class="text-xl font-semibold mb-4 text-indigo-700 flex items-center gap-2">
+        <i class="fas fa-filter"></i> Filter Transactions
+      </h2>
+      <div class="flex flex-wrap gap-3">
+        <button
+          class="filter-btn bg-indigo-100 text-indigo-700 px-3 py-1 rounded hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          data-category="all"
+          aria-pressed="true"
+        >
+          All
+        </button>
+        <button
+          class="filter-btn bg-indigo-100 text-indigo-700 px-3 py-1 rounded hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          data-category="Food"
+          aria-pressed="false"
+        >
+          Food
+        </button>
+        <button
+          class="filter-btn bg-indigo-100 text-indigo-700 px-3 py-1 rounded hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          data-category="Transportation"
+          aria-pressed="false"
+        >
+          Transportation
+        </button>
+        <button
+          class="filter-btn bg-indigo-100 text-indigo-700 px-3 py-1 rounded hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          data-category="Entertainment"
+          aria-pressed="false"
+        >
+          Entertainment
+        </button>
+        <button
+          class="filter-btn bg-indigo-100 text-indigo-700 px-3 py-1 rounded hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          data-category="Utilities"
+          aria-pressed="false"
+        >
+          Utilities
+        </button>
+        <button
+          class="filter-btn bg-indigo-100 text-indigo-700 px-3 py-1 rounded hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          data-category="Health"
+          aria-pressed="false"
+        >
+          Health
+        </button>
+        <button
+          class="filter-btn bg-indigo-100 text-indigo-700 px-3 py-1 rounded hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          data-category="Salary"
+          aria-pressed="false"
+        >
+          Salary
+        </button>
+        <button
+          class="filter-btn bg-indigo-100 text-indigo-700 px-3 py-1 rounded hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          data-category="Other"
+          aria-pressed="false"
+        >
+          Other
+        </button>
+      </div>
+    </section>
+
+    <section
+      id="transactions"
+      class="bg-white rounded-lg shadow-md p-6 mb-8 overflow-x-auto"
+      aria-label="List of transactions"
+    >
+      <h2 class="text-xl font-semibold mb-4 text-indigo-700 flex items-center gap-2">
+        <i class="fas fa-list"></i> Transactions
+      </h2>
+      <table class="min-w-full text-left text-gray-700" aria-describedby="transactions">
+        <thead class="bg-indigo-100 text-indigo-700 font-semibold">
+          <tr>
+            <th class="px-4 py-2 rounded-tl-lg">Date</th>
+            <th class="px-4 py-2">Description</th>
+            <th class="px-4 py-2">Category</th>
+            <th class="px-4 py-2">Type</th>
+            <th class="px-4 py-2 text-right">Amount</th>
+            <th class="px-4 py-2 rounded-tr-lg">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="transaction-list" class="divide-y divide-gray-200"></tbody>
+      </table>
+      <p id="no-transactions" class="text-center text-gray-500 mt-4">No transactions added yet.</p>
+    </section>
+
+    <section
+      id="summary"
+      class="bg-white rounded-lg shadow-md p-6 mb-8"
+      aria-label="Summary of income, expenses, and net income"
+    >
+      <h2 class="text-xl font-semibold mb-4 text-indigo-700 flex items-center gap-2">
+        <i class="fas fa-chart-pie"></i> Summary
+      </h2>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 text-center">
+        <div class="bg-green-100 rounded-lg p-4">
+          <p class="text-green-700 font-semibold text-lg">Total Income</p>
+          <p
+            id="total-income"
+            class="text-green-900 font-bold text-2xl mt-2"
+            aria-live="polite"
+            aria-atomic="true"
+          >
+            $0.00
+          </p>
+        </div>
+        <div class="bg-red-100 rounded-lg p-4">
+          <p class="text-red-700 font-semibold text-lg">Total Expenses</p>
+          <p
+            id="total-expenses"
+            class="text-red-900 font-bold text-2xl mt-2"
+            aria-live="polite"
+            aria-atomic="true"
+          >
+            $0.00
+          </p>
+        </div>
+        <div class="bg-indigo-100 rounded-lg p-4">
+          <p class="text-indigo-700 font-semibold text-lg">Net Income</p>
+          <p
+            id="net-income"
+            class="text-indigo-900 font-bold text-2xl mt-2"
+            aria-live="polite"
+            aria-atomic="true"
+          >
+            $0.00
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section
+      id="chart-section"
+      class="bg-white rounded-lg shadow-md p-6 mb-8"
+      aria-label="Pie chart showing distribution of expenses by category"
+    >
+      <h2 class="text-xl font-semibold mb-4 text-indigo-700 flex items-center gap-2">
+        <i class="fas fa-chart-pie"></i> Expense Distribution
+      </h2>
+      <canvas id="expense-chart" aria-label="Pie chart of expenses by category" role="img"></canvas>
+    </section>
+  </main>
+
+  <footer class="bg-indigo-600 text-indigo-100 p-4 text-center text-sm">
+    &copy; 2024 Expense Tracker. All rights reserved.
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    (() => {
+      const menuBtn = document.getElementById('menu-btn');
+      const mobileMenu = document.getElementById('mobile-menu');
+      menuBtn.addEventListener('click', () => {
+        mobileMenu.classList.toggle('hidden');
+      });
+    })();
+
+    const form = document.getElementById('transaction-form');
+    const transactionList = document.getElementById('transaction-list');
+    const noTransactions = document.getElementById('no-transactions');
+    const totalIncomeEl = document.getElementById('total-income');
+    const totalExpensesEl = document.getElementById('total-expenses');
+    const netIncomeEl = document.getElementById('net-income');
+    const formError = document.getElementById('form-error');
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    const ctx = document.getElementById('expense-chart').getContext('2d');
+
+    let transactions = JSON.parse(localStorage.getItem('transactions')) || [];
+
+    // Chart.js pie chart instance
+    let expenseChart;
+
+    function saveTransactions() {
+      localStorage.setItem('transactions', JSON.stringify(transactions));
+    }
+
+    function formatCurrency(amount) {
+      return amount.toLocaleString('en-US', {
+        style: 'currency',
+        currency: 'USD',
+      });
+    }
+
+    function updateSummary() {
+      const income = transactions
+        .filter((t) => t.type === 'income')
+        .reduce((sum, t) => sum + t.amount, 0);
+      const expenses = transactions
+        .filter((t) => t.type === 'expense')
+        .reduce((sum, t) => sum + t.amount, 0);
+      const net = income - expenses;
+
+      totalIncomeEl.textContent = formatCurrency(income);
+      totalExpensesEl.textContent = formatCurrency(expenses);
+      netIncomeEl.textContent = formatCurrency(net);
+    }
+
+    function createCategoryLabel(category) {
+      const colors = {
+        Food: 'bg-yellow-200 text-yellow-800',
+        Transportation: 'bg-blue-200 text-blue-800',
+        Entertainment: 'bg-pink-200 text-pink-800',
+        Utilities: 'bg-purple-200 text-purple-800',
+        Health: 'bg-red-200 text-red-800',
+        Salary: 'bg-green-200 text-green-800',
+        Other: 'bg-gray-200 text-gray-800',
+      };
+      const colorClass = colors[category] || 'bg-gray-200 text-gray-800';
+      const span = document.createElement('span');
+      span.className = `inline-block px-2 py-0.5 rounded text-xs font-semibold ${colorClass}`;
+      span.textContent = category;
+      return span;
+    }
+
+    function renderTransactions(filterCategory = 'all') {
+      transactionList.innerHTML = '';
+      let filtered = transactions;
+      if (filterCategory !== 'all') {
+        filtered = transactions.filter((t) => t.category === filterCategory);
+      }
+      if (filtered.length === 0) {
+        noTransactions.classList.remove('hidden');
+      } else {
+        noTransactions.classList.add('hidden');
+      }
+
+      filtered.forEach((t, index) => {
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-indigo-50';
+
+        // Date
+        const tdDate = document.createElement('td');
+        tdDate.className = 'px-4 py-2 whitespace-nowrap';
+        tdDate.textContent = new Date(t.date).toLocaleDateString();
+        tr.appendChild(tdDate);
+
+        // Description
+        const tdDesc = document.createElement('td');
+        tdDesc.className = 'px-4 py-2';
+        tdDesc.textContent = t.description;
+        tr.appendChild(tdDesc);
+
+        // Category
+        const tdCategory = document.createElement('td');
+        tdCategory.className = 'px-4 py-2';
+        tdCategory.appendChild(createCategoryLabel(t.category));
+        tr.appendChild(tdCategory);
+
+        // Type
+        const tdType = document.createElement('td');
+        tdType.className = 'px-4 py-2 capitalize';
+        tdType.textContent = t.type;
+        tr.appendChild(tdType);
+
+        // Amount
+        const tdAmount = document.createElement('td');
+        tdAmount.className =
+          'px-4 py-2 text-right font-semibold ' +
+          (t.type === 'income' ? 'text-green-700' : 'text-red-700');
+        tdAmount.textContent = formatCurrency(t.amount);
+        tr.appendChild(tdAmount);
+
+        // Actions
+        const tdActions = document.createElement('td');
+        tdActions.className = 'px-4 py-2 text-center';
+
+        // Edit button
+        const editBtn = document.createElement('button');
+        editBtn.className =
+          'text-indigo-600 hover:text-indigo-900 mr-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 rounded';
+        editBtn.setAttribute('aria-label', `Edit transaction ${t.description}`);
+        editBtn.innerHTML = '<i class="fas fa-edit"></i>';
+        editBtn.addEventListener('click', () => {
+          populateFormForEdit(index);
+        });
+        tdActions.appendChild(editBtn);
+
+        // Delete button
+        const delBtn = document.createElement('button');
+        delBtn.className =
+          'text-red-600 hover:text-red-900 focus:outline-none focus:ring-2 focus:ring-red-500 rounded';
+        delBtn.setAttribute('aria-label', `Delete transaction ${t.description}`);
+        delBtn.innerHTML = '<i class="fas fa-trash-alt"></i>';
+        delBtn.addEventListener('click', () => {
+          if (
+            confirm(
+              `Are you sure you want to delete the transaction "${t.description}"?`
+            )
+          ) {
+            transactions.splice(index, 1);
+            saveTransactions();
+            renderTransactions(currentFilter);
+            updateSummary();
+            updateChart();
+            resetForm();
+          }
+        });
+        tdActions.appendChild(delBtn);
+
+        tr.appendChild(tdActions);
+
+        transactionList.appendChild(tr);
+      });
+    }
+
+    function validateForm(data) {
+      if (!data.date) {
+        return 'Please select a valid date.';
+      }
+      if (!data.description.trim()) {
+        return 'Please enter a description.';
+      }
+      if (!data.category) {
+        return 'Please select a category.';
+      }
+      if (isNaN(data.amount) || data.amount <= 0) {
+        return 'Please enter a valid amount greater than zero.';
+      }
+      if (!['income', 'expense'].includes(data.type)) {
+        return 'Please select a valid transaction type.';
+      }
+      return '';
+    }
+
+    function resetForm() {
+      form.reset();
+      formError.textContent = '';
+      formError.classList.add('hidden');
+      editingIndex = null;
+      form.querySelector('button[type="submit"]').textContent = 'Add';
+    }
+
+    function populateFormForEdit(index) {
+      const t = transactions[index];
+      form.date.value = t.date;
+      form.description.value = t.description;
+      form.category.value = t.category;
+      form.amount.value = t.amount;
+      form.type.value = t.type;
+      editingIndex = index;
+      form.querySelector('button[type="submit"]').textContent = 'Update';
+      formError.textContent = '';
+      formError.classList.add('hidden');
+      form.date.focus();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function updateChart() {
+      // Aggregate expenses by category
+      const expenseData = {};
+      transactions
+        .filter((t) => t.type === 'expense')
+        .forEach((t) => {
+          if (!expenseData[t.category]) {
+            expenseData[t.category] = 0;
+          }
+          expenseData[t.category] += t.amount;
+        });
+
+      const categories = Object.keys(expenseData);
+      const amounts = Object.values(expenseData);
+
+      if (expenseChart) {
+        expenseChart.destroy();
+      }
+
+      expenseChart = new Chart(ctx, {
+        type: 'pie',
+        data: {
+          labels: categories.length ? categories : ['No expenses'],
+          datasets: [
+            {
+              label: 'Expenses by Category',
+              data: amounts.length ? amounts : [1],
+              backgroundColor: categories.length
+                ? [
+                    '#FBBF24', // Food - yellow
+                    '#3B82F6', // Transportation - blue
+                    '#EC4899', // Entertainment - pink
+                    '#8B5CF6', // Utilities - purple
+                    '#EF4444', // Health - red
+                    '#22C55E', // Salary - green
+                    '#9CA3AF', // Other - gray
+                  ].slice(0, categories.length)
+                : ['#E5E7EB'], // gray for no data
+              borderWidth: 1,
+              borderColor: '#fff',
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: {
+                font: {
+                  size: 14,
+                },
+              },
+            },
+            tooltip: {
+              callbacks: {
+                label: function (context) {
+                  const label = context.label || '';
+                  const value = context.parsed || 0;
+                  return `${label}: ${formatCurrency(value)}`;
+                },
+              },
+            },
+          },
+        },
+      });
+    }
+
+    let editingIndex = null;
+    let currentFilter = 'all';
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const formData = new FormData(form);
+      const data = {
+        date: formData.get('date'),
+        description: formData.get('description').trim(),
+        category: formData.get('category'),
+        amount: parseFloat(formData.get('amount')),
+        type: formData.get('type'),
+      };
+
+      const errorMsg = validateForm(data);
+      if (errorMsg) {
+        formError.textContent = errorMsg;
+        formError.classList.remove('hidden');
+        return;
+      }
+      formError.textContent = '';
+      formError.classList.add('hidden');
+
+      if (editingIndex !== null) {
+        transactions[editingIndex] = data;
+        editingIndex = null;
+        form.querySelector('button[type="submit"]').textContent = 'Add';
+      } else {
+        transactions.push(data);
+      }
+      saveTransactions();
+      renderTransactions(currentFilter);
+      updateSummary();
+      updateChart();
+      resetForm();
+    });
+
+    filterButtons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        filterButtons.forEach((b) => {
+          b.classList.remove('bg-indigo-600', 'text-white');
+          b.classList.add('bg-indigo-100', 'text-indigo-700');
+          b.setAttribute('aria-pressed', 'false');
+        });
+        btn.classList.remove('bg-indigo-100', 'text-indigo-700');
+        btn.classList.add('bg-indigo-600', 'text-white');
+        btn.setAttribute('aria-pressed', 'true');
+        currentFilter = btn.dataset.category;
+        renderTransactions(currentFilter);
+      });
+    });
+
+    // Initial render
+    renderTransactions();
+    updateSummary();
+    updateChart();
+  </script>
+</body>
+</html>
