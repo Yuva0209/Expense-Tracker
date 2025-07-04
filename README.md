@@ -88,13 +88,6 @@ Transaction List UI – Shows all previous records in chronological order.
 
 
 
-## 🔗 External Dependencies
-
-> None.
-The application works completely offline using vanilla JavaScript and browser localStorage. No external libraries or APIs are required.
-
-
-
 
 
 
