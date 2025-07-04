@@ -11,23 +11,41 @@ The Expense Tracker is a lightweight, browser-based web application that helps u
 
 ## 🏗️ System Architecture
 
-+------------------------+
-|      User Interface    |
-|  (HTML/CSS/JavaScript) |
-+----------+-------------+
-           |
-           v
-+------------------------+
-|     Transaction Logic   |
-| (JS functions: Add,     |
-| Delete, Calculate, etc) |
-+----------+-------------+
-           |
-           v
-+------------------------+
-|   Local Storage (Web)  |
-|   (Key-Value Storage)  |
-+------------------------+
+#Frontend (Client-side):
+
+Built using HTML, CSS, and Vanilla JavaScript
+
+Provides a user-friendly interface for adding and managing transactions
+
+
+#Transaction Logic:
+
+JavaScript functions handle core operations:
+
+Add/delete transactions
+
+Calculate income, expenses, and balance
+
+Update the DOM dynamically
+
+
+
+#Data Storage:
+
+Uses Web Local Storage (localStorage) to store user data
+
+Ensures data persistence even after page reloads
+
+No backend or server required
+
+
+#Rendering Engine:
+
+Updates the UI in real-time as data changes
+
+Reflects the latest balance and transaction history instantly
+
+  
 
 
 
